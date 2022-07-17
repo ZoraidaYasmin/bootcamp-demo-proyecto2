@@ -1,16 +1,18 @@
 package com.proyecto1.purchase.service.impl;
 
-import com.proyecto1.purchase.client.TransactionClient;
-import com.proyecto1.purchase.entity.Purchase;
-import com.proyecto1.purchase.repository.PurchaseRepository;
-import com.proyecto1.purchase.service.PurchaseService;
-
 import java.math.BigDecimal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.proyecto1.purchase.entity.Purchase;
+import com.proyecto1.purchase.entity.Transaction;
+import com.proyecto1.purchase.repository.PurchaseRepository;
+import com.proyecto1.purchase.service.PurchaseService;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +24,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     PurchaseRepository purchaseRepository;
     
     @Autowired
-    TransactionClient transactionClient;
+    WebClient.Builder transactionClient;
 
     @Override
     public Flux<Purchase> findAll() {
@@ -34,7 +36,13 @@ public class PurchaseServiceImpl implements PurchaseService {
     public Mono<Purchase> create(Purchase purchase) {
         log.info("Method call create - purchase");
         return Mono.just(purchase).flatMap(p -> {
-        	return transactionClient.getTransactionWithDetails(p.getTransactionId())
+        	return transactionClient.build().get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/findByIdWithCustomer/{id}")
+                            .build(p.getTransactionId())
+                    )
+                    .retrieve()
+                    .bodyToMono(Transaction.class)
                     .filter(trans -> trans.getProduct().getTypeProduct() == 6) // Valida si es una tarjeta de credito
                     .flatMap(t -> {
                     	return this.findAllByTransactionId(purchase.getTransactionId()).map(s -> s.getPurchaseAmount())

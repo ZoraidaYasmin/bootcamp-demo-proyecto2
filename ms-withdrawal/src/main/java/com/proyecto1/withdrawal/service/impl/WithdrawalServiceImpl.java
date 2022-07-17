@@ -1,14 +1,16 @@
 package com.proyecto1.withdrawal.service.impl;
 
-import com.proyecto1.withdrawal.client.TransactionClient;
-import com.proyecto1.withdrawal.entity.Withdrawal;
-import com.proyecto1.withdrawal.repository.WithdrawalRepository;
-import com.proyecto1.withdrawal.service.WithdrawalService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.proyecto1.withdrawal.entity.Transaction;
+import com.proyecto1.withdrawal.entity.Withdrawal;
+import com.proyecto1.withdrawal.repository.WithdrawalRepository;
+import com.proyecto1.withdrawal.service.WithdrawalService;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +23,7 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     WithdrawalRepository withdrawalRepository;
 
     @Autowired
-    TransactionClient transactionClient;
+    WebClient.Builder transactionClient;
     @Override
     public Flux<Withdrawal> findAll() {
         log.info("Method call FindAll - withdrawal");
@@ -31,7 +33,13 @@ public class WithdrawalServiceImpl implements WithdrawalService {
     @Override
     public Mono<Withdrawal> create(Withdrawal c) {
         log.info("Method call Create - withdrawal");
-        return transactionClient.getTransactionWithDetails(c.getTransactionId())
+        return transactionClient.build().get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/findByIdWithCustomer/{id}")
+                        .build(c.getTransactionId())
+                )
+                .retrieve()
+                .bodyToMono(Transaction.class)
                 .filter( x -> x.getProduct().getIndProduct() == 2)
                 .hasElement()
                 .flatMap( y -> {
