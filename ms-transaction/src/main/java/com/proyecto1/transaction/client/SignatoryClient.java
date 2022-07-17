@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 @Component
 public class SignatoryClient {
-    private WebClient client = WebClient.create("http://localhost:9008/signatory");
+    private WebClient client = WebClient.create("http://signatory-service/signatory");
 
     public Flux<Signatory> getSignatory(){
         return client.get()

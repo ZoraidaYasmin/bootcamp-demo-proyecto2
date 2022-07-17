@@ -8,7 +8,7 @@ import reactor.core.publisher.Flux;
 
 @Component
 public class PaymentClient {
-    private WebClient client = WebClient.create("http://localhost:9006/payment");
+    private WebClient client = WebClient.create("http://payment-service/payment");
 
     public Flux<Payment> getPayment(){
         return client.get()

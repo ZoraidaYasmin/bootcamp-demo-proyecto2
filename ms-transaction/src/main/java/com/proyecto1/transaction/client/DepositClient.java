@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class DepositClient {
-    private WebClient client = WebClient.create("http://localhost:9005/deposit");
+    private WebClient client = WebClient.create("http://deposit-service/deposit");
 
     public Flux<Deposit> getDeposit(){
         return client.get()

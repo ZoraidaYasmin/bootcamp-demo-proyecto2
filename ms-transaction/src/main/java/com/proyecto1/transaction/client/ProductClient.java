@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class ProductClient {
 	
-	private WebClient product = WebClient.create("http://localhost:9003/product");
+	private WebClient product = WebClient.create("http://product-service/product");
 
     public Mono<Product> getProduct(String id){
     	return product.get()

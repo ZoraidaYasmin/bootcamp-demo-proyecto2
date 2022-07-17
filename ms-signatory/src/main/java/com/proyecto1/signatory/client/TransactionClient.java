@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class TransactionClient {
-    private WebClient client = WebClient.create("http://localhost:9004/transaction");
+    private WebClient client = WebClient.create("http://transaction-service/transaction");
 
     public Mono<Transaction> getAccountWithDetails(String id){
         return client.get()

@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class CustomerClient {
 
-    private WebClient client = WebClient.create("http://localhost:9002/customer");
+    private WebClient client = WebClient.create("http://customer-service/customer");
 
     public Mono<Customer> getCustomer(String id){
         return client.get()
