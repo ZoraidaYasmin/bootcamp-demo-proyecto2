@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/config-service/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-customer/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-product/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-transaction/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-deposit/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-withdrawal/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-signatory/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-purchase/pom.xml" />
+        <option value="$PROJECT_DIR$/ms-payment/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="PWA">
+    <option name="enabled" value="true" />
+    <option name="wasEnabledAtLeastOnce" value="true" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

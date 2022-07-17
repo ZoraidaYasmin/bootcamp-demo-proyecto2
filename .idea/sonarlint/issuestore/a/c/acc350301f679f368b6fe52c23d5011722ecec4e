@@ -1,0 +1,11 @@
+
+~
+java:S1488"cImmediately return this expression instead of assigning it to the temporary variable "newCustomer".(ÍÌøšşÿÿÿÿ
+y
+java:S1488%"cImmediately return this expression instead of assigning it to the temporary variable "newCustomer".(€šÃï
+[
+java:S4684#"@Replace this persistent entity with a simple POJO or DTO object.(²àÿ©ùÿÿÿÿ
+[
+java:S4684*"@Replace this persistent entity with a simple POJO or DTO object.(êÚãŸüÿÿÿÿ
+m
+java:S1128"RRemove this unused import 'com.proyecto1.product.service.impl.ProductServiceImpl'.(«ÜÎ¿ıÿÿÿÿ

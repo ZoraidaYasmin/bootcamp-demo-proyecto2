@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/bootcamp-proyecto1.iml" filepath="$PROJECT_DIR$/.idea/bootcamp-proyecto1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/config-service/configserver.iml" filepath="$PROJECT_DIR$/config-service/configserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-customer/customer.iml" filepath="$PROJECT_DIR$/ms-customer/customer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-deposit/deposit.iml" filepath="$PROJECT_DIR$/ms-deposit/deposit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-payment/payment.iml" filepath="$PROJECT_DIR$/ms-payment/payment.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-product/product.iml" filepath="$PROJECT_DIR$/ms-product/product.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-purchase/purchase.iml" filepath="$PROJECT_DIR$/ms-purchase/purchase.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-signatory/signatory.iml" filepath="$PROJECT_DIR$/ms-signatory/signatory.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-transaction/transaction.iml" filepath="$PROJECT_DIR$/ms-transaction/transaction.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ms-withdrawal/withdrawal.iml" filepath="$PROJECT_DIR$/ms-withdrawal/withdrawal.iml" />
+    </modules>
+  </component>
+</project>

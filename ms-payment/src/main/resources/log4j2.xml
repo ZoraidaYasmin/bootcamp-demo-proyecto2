@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MMM-dd HH:mm:ss} [%t] %-5level %-50c{2.} - %msg %n"></PatternLayout>
+		</Console>
+		<File name= "File" filename="ms-payment.log">
+			<PatternLayout pattern="%d [%t] %-5level %-50c{2.} - %msg %n"></PatternLayout>
+		</File>
+	</Appenders>
+	
+	<Loggers>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Root>
+		<logger name="prod" level="INFO"></logger>
+	</Loggers>
+</Configuration>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/config-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-customer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-customer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-deposit/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-deposit/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-payment/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-payment/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-product/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-product/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-purchase/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-purchase/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-signatory/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-signatory/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-transaction/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-transaction/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-withdrawal/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ms-withdrawal/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

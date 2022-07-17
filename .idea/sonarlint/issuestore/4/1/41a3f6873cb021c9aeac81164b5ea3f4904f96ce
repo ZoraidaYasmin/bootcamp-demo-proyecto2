@@ -1,0 +1,11 @@
+
+}
+java:S1488"bImmediately return this expression instead of assigning it to the temporary variable "newDeposit".(îÇµıüÿÿÿÿ
+x
+java:S1488%"bImmediately return this expression instead of assigning it to the temporary variable "newDeposit".(ıÃÍø
+[
+java:S4684#"@Replace this persistent entity with a simple POJO or DTO object.(µŞóÕüÿÿÿÿ
+V
+java:S4684*"@Replace this persistent entity with a simple POJO or DTO object.(Õœ•ò
+l
+java:S1128"VRemove this unused import 'com.proyecto1.signatory.service.impl.SignatoryServiceImpl'.(ê¦Ú
