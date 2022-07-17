@@ -1,18 +1,24 @@
 package com.proyecto1.transaction.service.impl;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.proyecto1.transaction.client.*;
-import com.proyecto1.transaction.entity.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import com.proyecto1.transaction.entity.Customer;
+import com.proyecto1.transaction.entity.Deposit;
+import com.proyecto1.transaction.entity.Payment;
+import com.proyecto1.transaction.entity.Product;
+import com.proyecto1.transaction.entity.Purchase;
+import com.proyecto1.transaction.entity.Signatory;
+import com.proyecto1.transaction.entity.Transaction;
+import com.proyecto1.transaction.entity.Withdrawal;
 import com.proyecto1.transaction.repository.TransactionRepository;
 import com.proyecto1.transaction.service.TransactionService;
 
@@ -25,27 +31,34 @@ public class TransacionServiceImpl implements TransactionService {
     private static final Logger log = LogManager.getLogger(TransacionServiceImpl.class);
     @Autowired
     TransactionRepository transactionRepository;
-
-    @Autowired
-    CustomerClient customerClient;
     
     @Autowired
-    ProductClient product;
-
+    @Qualifier("customer")
+    WebClient.Builder customerClient;
+    
     @Autowired
-    DepositClient depositClient;
-
+    @Qualifier("product")
+    WebClient.Builder product;
+    
     @Autowired
-    WithDrawalClient withDrawalClient;
-
+    @Qualifier("deposit")
+    WebClient.Builder depositClient;
+    
     @Autowired
-    PaymentClient paymentClient;
-
+    @Qualifier("payment")
+    WebClient.Builder paymentClient;
+    
     @Autowired
-    PurchaseClient purchaseClient;
-
+    @Qualifier("purchase")
+    WebClient.Builder purchaseClient;
+    
     @Autowired
-    SignatoryClient signatoryClient;
+    @Qualifier("signatory")
+    WebClient.Builder signatoryClient;
+    
+    @Autowired
+    @Qualifier("withdrawal")
+    WebClient.Builder withDrawalClient;
 
     @Override
     public Flux<Transaction> findAll() {
@@ -73,12 +86,18 @@ public class TransacionServiceImpl implements TransactionService {
                                    if (w){
                                        return Mono.error(new RuntimeException("The personal client cannot have more than one credit"));
                                    }else{
-                                       return product.getProduct(t.getProductId())
+                                       return product.build().get()
+                                               .uri("/find/"+t.getProductId())
+                                               .retrieve()
+                                               .bodyToMono(Product.class)
                                                .filter( x -> (x.getIndProduct() == 2) )
                                                .filter( x -> (x.getTypeProduct() == 1 || x.getTypeProduct() == 3) )
                                                .hasElement()
                                                .flatMap( zz -> {
-                                                   return customerClient.getCustomer(t.getCustomerId())
+                                                   return customerClient.build().get()
+                                                           .uri("/find/"+t.getCustomerId())
+                                                           .retrieve()
+                                                           .bodyToMono(Customer.class)
                                                            .filter( (x -> x.getTypeCustomer() == 2) )
                                                            .hasElement()
                                                            .flatMap( yy -> {
@@ -129,28 +148,49 @@ public class TransacionServiceImpl implements TransactionService {
         log.info("Method call FindByIdWithCustomer - transaction");
         return transactionRepository.findById(id)
                 .flatMap( trans -> {
-                    return customerClient.getCustomer(trans.getCustomerId())
+                    return customerClient.build().get()
+                            .uri("/find/"+trans.getCustomerId())
+                            .retrieve()
+                            .bodyToMono(Customer.class)
                             .flatMap( customer -> {
-                                return product.getProduct(trans.getProductId())
+                                return product.build().get()
+                                        .uri("/find/"+trans.getProductId())
+                                        .retrieve()
+                                        .bodyToMono(Product.class)
                                         .flatMap( product -> {
-                                        	return depositClient.getDeposit()
+                                        	return depositClient.build().get()
+                                                    .uri("/findAll")
+                                                    .retrieve()
+                                                    .bodyToFlux(Deposit.class)
                                                     .filter(x -> x.getTransactionId().equals(trans.getId()))
                                                     .collectList()
                                                     .flatMap((deposit -> {
-                                                        return withDrawalClient.getWithDrawal()
+                                                        return withDrawalClient.build().get()
+                                                                .uri("/findAll")
+                                                                .retrieve()
+                                                                .bodyToFlux(Withdrawal.class)
                                                                .filter(i -> i.getTransactionId().equals(trans.getId()))
                                                                .collectList()
                                                                .flatMap(( withdrawals -> {
-                                                                   return paymentClient.getPayment()
+                                                                   return paymentClient.build().get()
+                                                                           .uri("/findAll")
+                                                                           .retrieve()
+                                                                           .bodyToFlux(Payment.class)
                                                                            .filter(z -> z.getTransactionId().equals(trans.getId()))
                                                                            .collectList()
                                                                            .flatMap((payments -> {
-                                                                   return purchaseClient.getPurchase()
+                                                                   return purchaseClient.build().get()
+                                                                           .uri("/findAll")
+                                                                           .retrieve()
+                                                                           .bodyToFlux(Purchase.class)
                                                                            .filter(y -> y.getTransactionId().equals(trans.getId()))
                                                                            .collectList()
                                                                            .flatMap(purchases -> {
 
-                                                                               return signatoryClient.getSignatory()
+                                                                               return signatoryClient.build().get()
+                                                                                       .uri("/findAll")
+                                                                                       .retrieve()
+                                                                                       .bodyToFlux(Signatory.class)
                                                                                        .filter(o -> o.getTransactionId().equals(trans.getId()))
                                                                                        .collectList()
                                                                                        .flatMap(signatories -> {
@@ -171,7 +211,10 @@ public class TransacionServiceImpl implements TransactionService {
     	// Ahorro 10 movimientos maximo mensuales
     	// Cuenta corriente sin limite movimientos
     	
-    	return product.getProduct(t.getProductId()).flatMap(product -> {
+    	return product.build().get()
+                .uri("/find/"+t.getProductId())
+                .retrieve()
+                .bodyToMono(Product.class).flatMap(product -> {
     			// Ahorro 1
     			if(product.getTypeProduct() == 1) {
     				BigDecimal i = new BigDecimal(0.0);
@@ -205,27 +248,48 @@ public class TransacionServiceImpl implements TransactionService {
 	public Flux<Transaction> findAllWithDetail() {
         return transactionRepository.findAll()
                 .flatMap( trans -> {
-                    return customerClient.getCustomer(trans.getCustomerId())
+                    return customerClient.build().get()
+                            .uri("/find/"+trans.getCustomerId())
+                            .retrieve()
+                            .bodyToMono(Customer.class)
                             .flatMapMany( customer -> {
-                                return product.getProduct(trans.getProductId())
+                                return product.build().get()
+                                        .uri("/find/"+trans.getProductId())
+                                        .retrieve()
+                                        .bodyToMono(Product.class)
                                         .flatMapMany( product -> {
-                                            return depositClient.getDeposit()
+                                            return depositClient.build().get()
+                                                    .uri("/findAll")
+                                                    .retrieve()
+                                                    .bodyToFlux(Deposit.class)
                                                     .filter(x -> x.getTransactionId().equals(trans.getId()))
                                                     .collectList()
                                                     .flatMapMany((deposit -> {
-                                                        return withDrawalClient.getWithDrawal()
+                                                        return withDrawalClient.build().get()
+                                                                .uri("/findAll")
+                                                                .retrieve()
+                                                                .bodyToFlux(Withdrawal.class)
                                                                 .filter(i -> i.getTransactionId().equals(trans.getId()))
                                                                 .collectList()
                                                                 .flatMapMany(( withdrawals -> {
-                                                                    return paymentClient.getPayment()
+                                                                    return paymentClient.build().get()
+                                                                            .uri("/findAll")
+                                                                            .retrieve()
+                                                                            .bodyToFlux(Payment.class)
                                                                             .filter(z -> z.getTransactionId().equals(trans.getId()))
                                                                             .collectList()
                                                                             .flatMapMany((payments -> {
-                                                                                return purchaseClient.getPurchase()
+                                                                                return purchaseClient.build().get()
+                                                                                        .uri("/findAll")
+                                                                                        .retrieve()
+                                                                                        .bodyToFlux(Purchase.class)
                                                                                         .filter(y -> y.getTransactionId().equals(trans.getId()))
                                                                                         .collectList()
                                                                                         .flatMapMany(purchases -> {
-                                                                                            return signatoryClient.getSignatory()
+                                                                                            return signatoryClient.build().get()
+                                                                                                    .uri("/findAll")
+                                                                                                    .retrieve()
+                                                                                                    .bodyToFlux(Signatory.class)
                                                                                                     .filter(o -> o.getTransactionId().equals(trans.getId()))
                                                                                                     .collectList()
                                                                                                     .flatMapMany(signatories -> {

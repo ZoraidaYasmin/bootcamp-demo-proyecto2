@@ -1,14 +1,16 @@
 package com.proyecto1.payment.service.impl;
 
-import com.proyecto1.payment.client.TransactionClient;
-import com.proyecto1.payment.entity.Payment;
-import com.proyecto1.payment.repository.PaymentRepository;
-import com.proyecto1.payment.service.PaymentService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.proyecto1.payment.entity.Payment;
+import com.proyecto1.payment.entity.Transaction;
+import com.proyecto1.payment.repository.PaymentRepository;
+import com.proyecto1.payment.service.PaymentService;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,7 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
     PaymentRepository paymentRepository;
 
     @Autowired
-    TransactionClient transactionClient;
+    WebClient.Builder transactionClient;
 
     @Override
     public Flux<Payment> findAll() {
@@ -31,7 +33,13 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Mono<Payment> create(Payment c) {
         log.info("Method call create - payment");
-        return transactionClient.getTransactionWithDetails(c.getTransactionId())
+        return transactionClient.build().get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/findByIdWithCustomer/{id}")
+                        .build(c.getTransactionId())
+                )
+                .retrieve()
+                .bodyToMono(Transaction.class)
                 .filter( x -> x.getProduct().getIndProduct() == 1)
                 .hasElement()
                 .flatMap( y -> {

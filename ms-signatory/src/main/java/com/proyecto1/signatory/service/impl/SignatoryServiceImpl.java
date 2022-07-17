@@ -1,12 +1,14 @@
 package com.proyecto1.signatory.service.impl;
 
-import com.proyecto1.signatory.client.TransactionClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.proyecto1.signatory.entity.Signatory;
+import com.proyecto1.signatory.entity.Transaction;
 import com.proyecto1.signatory.repository.SignatoryRepository;
 import com.proyecto1.signatory.service.SignatoryService;
 
@@ -22,7 +24,16 @@ public class SignatoryServiceImpl implements SignatoryService {
     SignatoryRepository signatoryRepository;
 
     @Autowired
-    TransactionClient transactionClient;
+    @Qualifier("transaction")
+    WebClient.Builder transactionClient;
+    
+    @Autowired
+    @Qualifier("customer")
+    WebClient.Builder customerClient;
+    
+    @Autowired
+    @Qualifier("product")
+    WebClient.Builder productClient;
 
     @Override
     public Flux<Signatory> findAll() {
@@ -34,7 +45,13 @@ public class SignatoryServiceImpl implements SignatoryService {
     public Mono<Signatory> create(Signatory c) {
         log.info("Method call Create - signatory");
 
-        return transactionClient.getAccountWithDetails(c.getTransactionId())
+        return transactionClient.build().get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/findByIdWithCustomer/{id}")
+                        .build(c.getTransactionId())
+                )
+                .retrieve()
+                .bodyToMono(Transaction.class)
                 .filter( x -> x.getProduct().getIndProduct() == 1)
                 .filter(z -> z.getCustomer().getTypeCustomer() == 2)
                 .hasElement()

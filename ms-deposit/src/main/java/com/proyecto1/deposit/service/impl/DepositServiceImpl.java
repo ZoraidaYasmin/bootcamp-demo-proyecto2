@@ -1,14 +1,16 @@
 package com.proyecto1.deposit.service.impl;
 
-import com.proyecto1.deposit.client.TransactionClient;
-import com.proyecto1.deposit.entity.Deposit;
-import com.proyecto1.deposit.repository.DepositRepository;
-import com.proyecto1.deposit.service.DepositService;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.proyecto1.deposit.entity.Deposit;
+import com.proyecto1.deposit.entity.Transaction;
+import com.proyecto1.deposit.repository.DepositRepository;
+import com.proyecto1.deposit.service.DepositService;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,7 +22,7 @@ public class DepositServiceImpl implements DepositService {
     DepositRepository depositRepository;
 
     @Autowired
-    TransactionClient transactionClient;
+    WebClient.Builder transactionClient;
 
     @Override
     public Flux<Deposit> findAll() {
@@ -32,7 +34,13 @@ public class DepositServiceImpl implements DepositService {
     public Mono<Deposit> create(Deposit c) {
         log.info("Method call create - deposit");
 
-        return transactionClient.getTransactionWithDetails(c.getTransactionId())
+        return transactionClient.build().get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/findByIdWithCustomer/{id}")
+                        .build(c.getTransactionId())
+                )
+                .retrieve()
+                .bodyToMono(Transaction.class)
                 .filter( x -> x.getProduct().getIndProduct() == 2)
                 .hasElement()
                 .flatMap( y -> {
